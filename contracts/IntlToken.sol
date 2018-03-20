@@ -1,25 +1,62 @@
-pragma solidity ^0.4.17;
-
-
 pragma solidity ^0.4.18;
 
-import "./BasicToken.sol";
-import "./ERC20.sol";
-import "./DetailedERC20.sol";
 import "./Ownable.sol";
-
+import "./SafeMath.sol";
 
 /**
- * @title Standard ERC20 token
+ * @title INTLTOKEN
  *
  * @dev Implementation of the basic standard token.
- * @dev https://github.com/ethereum/EIPs/issues/20
- * @dev Based on code by FirstBlood: https://github.com/Firstbloodio/token/blob/master/smart_contract/FirstBloodToken.sol
  */
-contract StandardToken is ERC20, BasicToken, Ownable, DetailedERC20 {
+contract IntlToken is Ownable {
+  using SafeMath for uint256;
+  event Transfer(address indexed from, address indexed to, uint256 value);
+  event Approval(address indexed owner, address indexed spender, uint256 value);
 
   mapping (address => mapping (address => uint256)) internal allowed;
+  mapping(address => uint256) balances;
 
+  string public name = "INTLToken";
+  string public symbol = "INTLT";
+  uint8 public decimals = 2;
+  uint256 totalSupply_ = 200000000000;
+
+
+  function IntlToken() public {
+    balances[msg.sender] = totalSupply_;
+  }
+
+  /**
+  * @dev total number of tokens in existence
+  */
+  function totalSupply() public view returns (uint256) {
+    return totalSupply_;
+  }
+
+  /**
+  * @dev transfer token for a specified address
+  * @param _to The address to transfer to.
+  * @param _value The amount to be transferred.
+  */
+  function transfer(address _to, uint256 _value) public returns (bool) {
+    require(_to != address(0));
+    require(_value <= balances[msg.sender]);
+
+    // SafeMath.sub will throw if there is not enough balance.
+    balances[msg.sender] = balances[msg.sender].sub(_value);
+    balances[_to] = balances[_to].add(_value);
+    Transfer(msg.sender, _to, _value);
+    return true;
+  }
+
+  /**
+  * @dev Gets the balance of the specified address.
+  * @param _owner The address to query the the balance of.
+  * @return An uint256 representing the amount owned by the passed address.
+  */
+  function balanceOf(address _owner) public view returns (uint256 balance) {
+    return balances[_owner];
+  }
 
   /**
    * @dev Transfer tokens from one address to another
