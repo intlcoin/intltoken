@@ -1,23 +1,35 @@
 pragma solidity ^0.4.18;
 
-contract SafeMath {
-    function safeAdd(uint a, uint b) public pure returns (uint c) {
-        c = a + b;
-        require(c >= a);
+
+library SafeMath {
+
+  function mul(uint256 a, uint256 b) internal pure returns (uint256) {
+    if (a == 0) {
+      return 0;
     }
-    function safeSub(uint a, uint b) public pure returns (uint c) {
-        require(b <= a);
-        c = a - b;
-    }
-    function safeMul(uint a, uint b) public pure returns (uint c) {
-        c = a * b;
-        require(a == 0 || c / a == b);
-    }
-    function safeDiv(uint a, uint b) public pure returns (uint c) {
-        require(b > 0);
-        c = a / b;
-    }
+    uint256 c = a * b;
+    assert(c / a == b);
+    return c;
+  }
+
+  function div(uint256 a, uint256 b) internal pure returns (uint256) {
+    uint256 c = a / b;
+    return c;
+  }
+
+  function sub(uint256 a, uint256 b) internal pure returns (uint256) {
+    assert(b <= a);
+    return a - b;
+  }
+
+  function add(uint256 a, uint256 b) internal pure returns (uint256) {
+    uint256 c = a + b;
+    assert(c >= a);
+    return c;
+  }
 }
+
+
 
 
 
@@ -68,7 +80,8 @@ contract Owned {
 
 
 
-contract NullToken is ERC20Interface, Owned, SafeMath {
+contract ZToken is ERC20Interface, Owned {
+    using SafeMath for uint256;
     string public symbol;
     string public  name;
     uint8 public decimals;
@@ -78,11 +91,11 @@ contract NullToken is ERC20Interface, Owned, SafeMath {
     mapping(address => mapping(address => uint)) allowed;
 
 
-    function NullToken() public {
-        symbol = "NULLT";
-        name = "Null Token";
+    function ZToken() public {
+        symbol = "ZTX";
+        name = "Z Token";
         decimals = 18;
-        _totalSupply = 100000000000000000000000000;
+        _totalSupply = 2000000000000000000000000000;
         balances[msg.sender] = _totalSupply;
         Transfer(address(0), msg.sender, _totalSupply);
     }
@@ -97,8 +110,8 @@ contract NullToken is ERC20Interface, Owned, SafeMath {
     }
 
     function transfer(address to, uint tokens) public returns (bool success) {
-        balances[msg.sender] = safeSub(balances[msg.sender], tokens);
-        balances[to] = safeAdd(balances[to], tokens);
+        balances[msg.sender] = balances[msg.sender].sub(tokens);
+        balances[to] = balances[to].add(tokens);
         Transfer(msg.sender, to, tokens);
         return true;
     }
@@ -110,9 +123,9 @@ contract NullToken is ERC20Interface, Owned, SafeMath {
     }
 
     function transferFrom(address from, address to, uint tokens) public returns (bool success) {
-        balances[from] = safeSub(balances[from], tokens);
-        allowed[from][msg.sender] = safeSub(allowed[from][msg.sender], tokens);
-        balances[to] = safeAdd(balances[to], tokens);
+        balances[from] = balances[from].sub(tokens);
+        allowed[from][msg.sender] = allowed[from][msg.sender].sub(tokens);
+        balances[to] = balances[to].add(tokens);
         Transfer(from, to, tokens);
         return true;
     }

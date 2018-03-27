@@ -1,5 +1,5 @@
-var IntlToken = artifacts.require("./IntlToken.sol");
+var ZToken = artifacts.require("./ZToken.sol");
 
 module.exports = function(deployer) {
-  deployer.deploy(IntlToken);
+  deployer.deploy(ZToken);
 };
