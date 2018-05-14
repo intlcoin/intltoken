@@ -29,10 +29,6 @@ library SafeMath {
   }
 }
 
-
-
-
-
 contract ERC20Interface {
     function totalSupply() public constant returns (uint);
     function balanceOf(address tokenOwner) public constant returns (uint balance);
@@ -49,8 +45,6 @@ contract ERC20Interface {
 contract ApproveAndCallFallBack {
     function receiveApproval(address from, uint256 tokens, address token, bytes data) public;
 }
-
-
 
 contract Owned {
     address public owner;
@@ -78,9 +72,7 @@ contract Owned {
     }
 }
 
-
-
-contract ZToken is ERC20Interface, Owned {
+contract INTLToken is ERC20Interface, Owned {
     using SafeMath for uint256;
     string public symbol;
     string public  name;
@@ -91,11 +83,11 @@ contract ZToken is ERC20Interface, Owned {
     mapping(address => mapping(address => uint)) allowed;
 
 
-    function ZToken() public {
-        symbol = "ZTX";
-        name = "Z Token";
+    function INTLToken() public {
+        symbol = "INTL";
+        name = "INTLToken";
         decimals = 18;
-        _totalSupply = 2000000000000000000000000000;
+        _totalSupply = 55000000000000000000000000;
         balances[msg.sender] = _totalSupply;
         Transfer(address(0), msg.sender, _totalSupply);
     }
